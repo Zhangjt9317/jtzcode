@@ -104,7 +104,7 @@ theme: butterfly
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git  
-  repo: https://github.com/Zhangjt9317/jtzblog.github.io.git
+  repo: https://github.com/Zhangjt9317/Zhangjt9317.github.io.git
   branch: master
 
 # # offline config passed to sw-precache.
