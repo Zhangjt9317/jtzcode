@@ -451,9 +451,9 @@ yandex_site_verification:
 
 theme_color:
   enable: true
-  main: "#020202"
+  main: "#DC143C"
   paginator: "#00c4b6"
-  button_hover: "#FF7242"
+  button_hover: "#4169E1"
   text_selection: "#00c4b6"
   link_color: "#99a9bf"
   meta_color: "#858585"
@@ -786,7 +786,7 @@ lazyload:
 # See https://github.com/JLHwung/hexo-offline
 # ---------------
 # pwa:
-#   enable: false
+#   enable: true
 #   manifest: /image/pwa/manifest.json
 #   apple_touch_icon: /image/pwa/apple-touch-icon.png
 #   favicon_32_32: /image/pwa/32.png
