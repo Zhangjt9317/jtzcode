@@ -8,8 +8,7 @@ categories:
 ---
 
 # Introduction
-
-**refer to [Binance Academy](https://academy.binance.com/blockchain/delegated-proof-of-stake-explained**
+**refer to [Binance Academy](https://academy.binance.com/blockchain/delegated-proof-of-stake-explaine])**
 
 A consensus algorithms is a mechanism that allows users or machines to coordinate in a distributed setting. It needs to ensure that all agents in the system can agree on a single source of truth, even if some agents fail. It is a fault-tolearnt mechanism to address the [Byzantine Fault Tolerance](https://academy.binance.com/blockchain/byzantine-fault-tolerance-explained)
 

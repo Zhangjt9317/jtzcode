@@ -7,7 +7,7 @@ categories:
 ---
 
 
-# Bot 
+# Introduction 
 
 
 
@@ -17,3 +17,6 @@ I made some sample conversation bots here: [sample bot using Azure LUIS](https:/
 
 Azure provides mature language processing service to help bots to understand user's intention and classify it into differnt groups. 
 
+## Hands-on Bot Making
+
+In this example I will present the 
