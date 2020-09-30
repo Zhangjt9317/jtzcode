@@ -36,7 +36,7 @@ The sequence diagram for the supply chain of pets look like the following:
 
 know the authenticity of product and seller 
 
-Services 
+Services
 
 * Platform
   * Network
