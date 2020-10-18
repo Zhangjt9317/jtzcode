@@ -4,10 +4,6 @@ date: 2020-09-23 23:17:28
 tags:
 ---
 
-
-# Introduction 
-
-
 ## What is Docker and Why using it
 
 Imaging you have a ecommerce website with multiple servers, and after a while you have surging number of visits, especially in afternoon and evening. So you want more servers to help to process these visits.
@@ -32,11 +28,62 @@ For Windows Home user, you can do the following to run docker:
 2. install the Linux Subsystem (Debian, Ubuntu, Zorin, Elmentary OS, etc.)
 
 
-## Container
+## Images and Containers
+
+1. Docker Image 
+   * Image is a template for creating an environment of your choice 
+   * Snapshot ==> multiple version of snapshots, and you can point to whichever version you need 
+   * Has everything need to run your apps
+   * OS, software, app code 
+
+2. Docker Container
+  * Running instance of an image 
+  * For example ==> Running a redis container, Ngnix container, ....
+
+Example (Ngnix Container):
+
+```
+docker pull ngnix 
+docker images 
+```
+
+now you can run a Ngnix container
+
+```
+docker run ngnix:latest
+```
+
+you can probably see the process hiding, you can open a new terminal. 
+
+```
+docker container ls
+```
+
+now you can see the `ngnix:latest` shown
+
+Now you can return to the previous tab and `ctrl c`. run `docker container ls` and nothing is running right now. 
+
+You can also run in a detached mode by running 
+
+```
+docker run -d ngnix:latest
+docker container ls
+```
+you can see the running container, in this case you do not have to `ctrl c` or go to another terminal.
 
 
-## How is Docker Running 
+## Use of Container
 
+1. Exposing Port 
+2. 
+
+
+## Dockerfile 
+
+* Build you own images 
+
+
+check the [Dockerfile reference](https://docs.docker.com/engine/reference/builder/) if you want to know more.
 
 ## Example
 
@@ -85,3 +132,9 @@ services:
 ```
 
 it is a command that tells docker compose what you need to do 
+
+
+
+## References:
+
+[1]. https://www.youtube.com/watch?v=t8GbPocwQW0
