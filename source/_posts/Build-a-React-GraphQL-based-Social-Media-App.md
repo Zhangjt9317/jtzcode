@@ -56,13 +56,13 @@ After installation, create a new folder and create `.gitignore` and `index.js` b
 
 Install `apollo-server`, `graphql` and `mongoose` by running
 
-```[Bash]
+```Bash
 npm install apollo-server graphql mongoose
 ```
 
 After this, go to `index.js` and type the following:
 
-```[Javascript]
+```Javascript
 const {ApolloServer} = require('apollo-server');
 const gql = require("graphql-tag");
 
@@ -93,7 +93,7 @@ Get GraphQL and ApolloServer from the installed pacakge and set up the apollo se
 
 You will see an Apollo server playground after opening the url. Typing 
 
-```[Javascript]
+```Javascript
 query{
     sayHi
 }
@@ -122,7 +122,7 @@ Here you can find `docs` and `schema` tabs on the right side.
 
     In `User.js`, import `mongoose` and create a `userSchema`:
 
-    ```[Javascript]
+    ```Javascript
     const { model, Schema } = require("mongoose");
 
     const userSchema = new Schema({
@@ -137,19 +137,54 @@ Here you can find `docs` and `schema` tabs on the right side.
 
     In `Post.js`, build a `postShema` with `body`, `username`, `createdAt`, `comments`, `likes` and `user`. 
 
+    ```Javascript
+    const { model, Schema } = require("mongoose");
+
+    const postSchema = new Schema({
+    body: String,
+    username: String,
+    createdAt: String,
+    comments: [
+        {
+        body: String,
+        username: String,
+        createdAt: String,
+        },
+    ],
+    likes: [
+        {
+        username: String,
+        createdAt: String,
+        },
+    ],
+    user:{
+        type: Schema.Types.ObjectId,
+        ref: 'users'
+    }
+    });
+
+    module.exports = model("Post", postSchema);
+
+    ```
+
     The `user` should refer to `User.js` by using `Schema.Types.ObjectId` with `ref: 'users'`. 
 
     Both `User.js` and `Post.js` should be exported as modules and imported into `index.js`. 
 
+3.  Create a Sample Document 
 
-3. Import Modules and getPosts
+    Go to MongoDB Atlas `Collections` and `INSERT DOCUMENT`. Create a sample document as the following:
+
+    ![sample doc](insert_post_mongo.png)
+
+4. Import Modules and getPosts
 
     From the previous code, we import `Post.js` as `Post` and modify `gql` types and `resolvers` to fetch all posts from sample document we just created. 
 
-
     After modifications, the code right now should look like this:
+
    
-    ```[Javascript]
+    ```Javascript
     const {ApolloServer} = require('apollo-server');
     const gql = require("graphql-tag");
     const mongoose = require('mongoose');
@@ -200,11 +235,6 @@ Here you can find `docs` and `schema` tabs on the right side.
     ```
 
 
-4. Create a Sample Document 
-
-    Go to MongoDB Atlas `Collections` and `INSERT DOCUMENT`. Create a sample document as the following:
-
-    ![sample doc](insert_post_mongo.png)
 
 5. Get All Posts from Mongoose
 
@@ -215,6 +245,214 @@ Here you can find `docs` and `schema` tabs on the right side.
 
 
 ## Register & Login Users 
+
+
+Now we need to refactor the project structure since both `typeDefs` and `resolvers` are in the `index.js`, and they will keep growing.
+
+1. create a folder called `graphql` in the root directory
+2. add a file called `typeDefs.js` in `graphql` folder
+3. create a folder called `resolvers` in `graphql` folder 
+4. create 3 files: `index.js`, `posts.js`, `users.js` in the `resolvers` folder
+
+
+
+The project tree structure should look like this right now:
+
+
+```
+graphql
+    resolvers
+        index.js
+        posts.js
+        users.js
+    typeDefs.js
+models
+    Posts.js
+    User.js
+node_modules
+.gitignore
+config.js
+index.js
+LICENSE
+package-lock.json
+package.json
+README.md
+```
+
+
+
+In the `typeDefs.js` file, cut the original `typeDefs` function from `index.js` and past in the file, put it inside `module.exports = {}`
+
+
+`typeDefs.js`:
+
+```Javascript
+const {gql} = require("apollo-server");
+
+module.exports = gql`
+type Post {
+    id: ID!
+    body: String!
+    createdAt: String!
+    username: String!
+}
+type Query {
+    getPosts: [Post]
+}
+`
+
+const resolvers = {
+
+}
+
+```
+
+
+
+`graphql/posts.js`:
+
+```Javascript
+const Post = require("../../models/Post");
+
+module.exports = {
+    Query:{
+        async getPosts(){
+            try{
+                const posts = await Post.find(); //find all 
+                return posts
+            } catch(err){
+                throw new Error(err);
+            }
+        }
+    }
+}
+```
+
+`graphql/index.js`:
+
+```Javascript
+const postsResolvers = require("./posts");
+const usersResolvers = require("./users");
+
+module.exports = {
+  Query: {
+      ...postsResolvers.Query
+  },
+  
+};
+
+```
+
+`graphql/users.js`
+
+```Javascript
+const { model } = require("../../models/User");
+const User = require("../../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const {SECRET_KEY} = require("../../config");
+const {UserInputError} = require("apollo-server");
+
+
+module.exports = {
+    Mutation:{
+        // args ==> registerInput ==> 4 fields
+        async register(
+            _,
+            {registerInput : {username, email, password, confirmPassword}}, 
+            context, 
+            info
+            ){
+            //TODO: validate user data
+            //TODO: make sure user does not already exist
+
+            const user = await User.findOne({username});
+
+            if (user){
+                throw new UserInputError("Username is taken",{
+                    errors:{
+                        username: "This username is taken"
+                    }
+                })
+            }
+
+            // hash function 
+            password = await bcrypt.hash(password, 12);
+            const newUser = new User({
+                email,
+                username,
+                password,
+                createdAt: new Date().toISOString()
+             });
+            
+             const res = await newUser.save();
+
+             const token = jwt.sign(
+                 {
+                     id: res.id,
+                     email: res.email,
+                     username: res.username
+                 },
+                 SECRET_KEY,
+                 {expiresIn:"1h"}
+             );
+
+             return {
+                 ...res._doc,
+                 id: res._id,
+                 token
+             };
+        }
+    }
+};
+```
+
+
+The `index.js` after refactoring looks like this:
+
+```Javascript
+const {ApolloServer} = require('apollo-server');
+const gql = require("graphql-tag");
+const mongoose = require('mongoose');
+
+const {MONGODB} = require('./config.js');
+const typeDefs = require("./graphql/typeDefs");
+const resolvers = require("./graphql/resolvers")
+
+const server = new ApolloServer({
+    typeDefs, 
+    resolvers
+});
+
+
+mongoose
+    .connect(MONGODB, {useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() =>{
+        console.log(`MongoDB Connected`);
+        return server.listen({port: 5000});
+    }).then((res) => {
+        console.log(`Server running at ${res.url}`);
+    });
+
+
+```
+
+Install `nodemon` by running `npm i -D nodemon` in the terminal. `-D` means install as a dependency, and add `"start":"nodemon index:` in `pacakge.json`'s `scripts` section. nodemon allows us to reconnect everytime there is a change made, which is very easy to use. 
+
+
+**Now before performing more CRUD opeartions, which only authenticated users should do, we need to create authentication functions**
+
+To this step, you will possibly have an error on Appollo server saying "Error: Cannot return null for non-nullable field User.id.", I found a solution in this [link](https://github.com/apollographql/apollo-client/issues/4180#issuecomment-493795550). Removing the exclamation mark behind `User` type fields in `typeDefs.js`. It will give you null response (with valid token), but the response run as intended. 
+
+The response looks like this:
+
+
+![register](register.png)
+
+
+Now we need to add a `validator.js` and some error assertions in files, which is not hard. Basically, `validator.js` will check if password matches confirmPassword, if inputs are empty or not, if email address is in a correct format, etc. Till this step you can refer to the finished code [here](https://github.com/hidjou/classsed-graphql-mern-apollo/tree/class2)
+
+![validator](validator_check.png)
 
 
 ## Authentication Middleware & Create/Delete Posts

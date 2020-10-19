@@ -98,16 +98,16 @@ avatar:
 index_img: /images/everest.jpg
 
 # if the banner of page not setting, it will show the top_img
-default_top_img: 
+default_top_img: /images/forests.jpg
 
 # the banner image of archive page
-archive_img: /images/wall.jpg
+archive_img: /images/roof.jpg
 
 # the banner image of link page
 link_img: /images/roof.jpg
 
 # the banner image of about page 
-about_img: /images/water.jpg
+about_img: /images/roof.jpg
 
 # the banner image of tag page
 # note: tag page, not tags page (子標籤頁面的 top_img)
@@ -521,7 +521,7 @@ canvas_nest:
 # Typewriter Effect (打字效果)
 # https://github.com/disjukr/activate-power-mode
 activate_power_mode:
-  enable: false
+  enable: true
   colorful: true # open particle animation (冒光特效)
   shake: true #  open shake (抖動特效)
 
@@ -531,7 +531,7 @@ fireworks:
   zIndex: 9999 # -1 or 9999
 
 # Mouse click effects: Heart symbol (鼠標點擊效果: 愛心)
-click_heart: false
+click_heart: true
 
 # Mouse click effects: words (鼠標點擊效果: 文字)
 ClickShowText:
@@ -640,9 +640,9 @@ aside:
 # busuanzi count for PV / UV in site
 # 訪問人數
 busuanzi:
-  site_uv: true
-  site_pv: true
-  page_pv: true
+  site_uv: false
+  site_pv: false
+  page_pv: false
 
 # Time difference between publish date and now (網頁運行時間)
 # Formal: Month/Day/Year Time or Year/Month/Day Time
