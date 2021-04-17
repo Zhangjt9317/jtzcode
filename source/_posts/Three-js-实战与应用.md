@@ -10,26 +10,29 @@ This article refers to the [Three.js Journey course](https://threejs-journey.xyz
 
 ## Basics
 
-### 01 | Build a Scene 
+### 01 | Build a Scene
 
 To actually be able to display anything with three.js, we need three things:
 
-* scene 
-* camera
-* renderer
+- scene
+- camera
+- renderer
 
 so that we can render the scene with camera:
 
 ```javascript
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 ```
-
-
 
 ```HTML
 <!DOCTYPE html>
@@ -52,25 +55,25 @@ go to the threejs.org to check how to create a scene, first, download / copy the
 inside the script.js created, we will create a box first
 
 ```javascript
-// create a scene 
+// create a scene
 const scene = new THREE.scene();
 
-// Red cube 
-const geometry = new THREE.BoxGeometry(1,1,1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
+// Red cube
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const mesh = new THREE.Mesh(geometry, material);
+scene.add(mesh);
 
 // Camera
-const camera = new THREE.PerspectiveCamera()
-scene.add(camera)
-
-
+const camera = new THREE.PerspectiveCamera();
+scene.add(camera);
 ```
 
 ### 02 | Webpack
 
-in the previous section we loaded the Three.js in a single file, it has limitations, **it does not include some of the Three.js classes because the file would be too heavy  -- in one file** (use the three.min.js).
+in the previous section we loaded the Three.js in a single file, it has limitations, **it does not include some of the Three.js classes because the file would be too heavy -- in one file** (use the three.min.js).
+
+If you know nothing about webpack, go to the official documentation page and take a look at the tutorial, or you can check my post about Fundamental and Advanced Use of Webpack (webpack 技术总结 --> ctrl f to search).
 
 in this section we are going to need to run a server to load and manipulate images, to do that and because of security reasons, we need to run a local server. --> basically use classes in the three.js
 
@@ -84,20 +87,19 @@ A bundler is a tool in which you send assets like JS, CSS, HTML and other langua
 
 the basic folder structure looks like the following:
 
-
 ```markdown
 - bundler
-    - webpack.common.js
-    - webpack.dev.js
-    - webpack.prod.js
+  - webpack.common.js
+  - webpack.dev.js
+  - webpack.prod.js
 - dist --> show after build
 - src
-    - index.html
-    - script.js
-    - style.css
+  - index.html
+  - script.js
+  - style.css
 - static
-    - .gitkeep
-    - door.jpg
+  - .gitkeep
+  - door.jpg
 - package-lock.json
 - package.json
 - readme.md
@@ -106,182 +108,155 @@ the basic folder structure looks like the following:
 the bundler is provided:
 
 webpack.common.js
-```javascript
 
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
-const path = require('path')
+```javascript
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
+const path = require("path");
 
 module.exports = {
-    entry: path.resolve(__dirname, '../src/script.js'),
-    output:
-    {
-        filename: 'bundle.[contenthash].js',
-        path: path.resolve(__dirname, '../dist')
-    },
-    devtool: 'source-map',
-    plugins:
-        [
-            new CopyWebpackPlugin({
-                patterns: [
-                    { from: path.resolve(__dirname, '../static') }
-                ]
-            }),
-            new HtmlWebpackPlugin({
-                template: path.resolve(__dirname, '../src/index.html'),
-                minify: true
-            }),
-            new MiniCSSExtractPlugin()
+  entry: path.resolve(__dirname, "../src/script.js"),
+  output: {
+    filename: "bundle.[contenthash].js",
+    path: path.resolve(__dirname, "../dist"),
+  },
+  devtool: "source-map",
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [{ from: path.resolve(__dirname, "../static") }],
+    }),
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "../src/index.html"),
+      minify: true,
+    }),
+    new MiniCSSExtractPlugin(),
+  ],
+  module: {
+    rules: [
+      // HTML
+      {
+        test: /\.(html)$/,
+        use: ["html-loader"],
+      },
+
+      // JS
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: ["babel-loader"],
+      },
+
+      // CSS
+      {
+        test: /\.css$/,
+        use: [MiniCSSExtractPlugin.loader, "css-loader"],
+      },
+
+      // Images
+      {
+        test: /\.(jpg|png|gif|svg)$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              outputPath: "assets/images/",
+            },
+          },
         ],
-    module:
-    {
-        rules:
-            [
-                // HTML
-                {
-                    test: /\.(html)$/,
-                    use: ['html-loader']
-                },
+      },
 
-                // JS
-                {
-                    test: /\.js$/,
-                    exclude: /node_modules/,
-                    use:
-                        [
-                            'babel-loader'
-                        ]
-                },
-
-                // CSS
-                {
-                    test: /\.css$/,
-                    use:
-                        [
-                            MiniCSSExtractPlugin.loader,
-                            'css-loader'
-                        ]
-                },
-
-                // Images
-                {
-                    test: /\.(jpg|png|gif|svg)$/,
-                    use:
-                        [
-                            {
-                                loader: 'file-loader',
-                                options:
-                                {
-                                    outputPath: 'assets/images/'
-                                }
-                            }
-                        ]
-                },
-
-                // Fonts
-                {
-                    test: /\.(ttf|eot|woff|woff2)$/,
-                    use:
-                        [
-                            {
-                                loader: 'file-loader',
-                                options:
-                                {
-                                    outputPath: 'assets/fonts/'
-                                }
-                            }
-                        ]
-                }
-            ]
-    }
-}
-
+      // Fonts
+      {
+        test: /\.(ttf|eot|woff|woff2)$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              outputPath: "assets/fonts/",
+            },
+          },
+        ],
+      },
+    ],
+  },
+};
 ```
 
 webpack.dev.js
+
 ```javascript
-const { merge } = require('webpack-merge')
-const commonConfiguration = require('./webpack.common.js')
-const ip = require('internal-ip')
-const portFinderSync = require('portfinder-sync')
+const { merge } = require("webpack-merge");
+const commonConfiguration = require("./webpack.common.js");
+const ip = require("internal-ip");
+const portFinderSync = require("portfinder-sync");
 
-const infoColor = (_message) =>
-{
-    return `\u001b[1m\u001b[34m${_message}\u001b[39m\u001b[22m`
-}
+const infoColor = (_message) => {
+  return `\u001b[1m\u001b[34m${_message}\u001b[39m\u001b[22m`;
+};
 
-module.exports = merge(
-    commonConfiguration,
-    {
-        mode: 'development',
-        devServer:
-        {
-            host: '0.0.0.0',
-            port: portFinderSync.getPort(8080),
-            contentBase: './dist',
-            watchContentBase: true,
-            open: true,
-            https: false,
-            useLocalIp: true,
-            disableHostCheck: true,
-            overlay: true,
-            noInfo: true,
-            after: function(app, server, compiler)
-            {
-                const port = server.options.port
-                const https = server.options.https ? 's' : ''
-                const localIp = ip.v4.sync()
-                const domain1 = `http${https}://${localIp}:${port}`
-                const domain2 = `http${https}://localhost:${port}`
-                
-                console.log(`Project running at:\n  - ${infoColor(domain1)}\n  - ${infoColor(domain2)}`)
-            }
-        }
-    }
-)
+module.exports = merge(commonConfiguration, {
+  mode: "development",
+  devServer: {
+    host: "0.0.0.0",
+    port: portFinderSync.getPort(8080),
+    contentBase: "./dist",
+    watchContentBase: true,
+    open: true,
+    https: false,
+    useLocalIp: true,
+    disableHostCheck: true,
+    overlay: true,
+    noInfo: true,
+    after: function (app, server, compiler) {
+      const port = server.options.port;
+      const https = server.options.https ? "s" : "";
+      const localIp = ip.v4.sync();
+      const domain1 = `http${https}://${localIp}:${port}`;
+      const domain2 = `http${https}://localhost:${port}`;
 
+      console.log(
+        `Project running at:\n  - ${infoColor(domain1)}\n  - ${infoColor(
+          domain2
+        )}`
+      );
+    },
+  },
+});
 ```
 
 webpack.prod.js
+
 ```javascript
-const { merge } = require('webpack-merge')
-const commonConfiguration = require('./webpack.common.js')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const { merge } = require("webpack-merge");
+const commonConfiguration = require("./webpack.common.js");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
-module.exports = merge(
-    commonConfiguration,
-    {
-        mode: 'production',
-        plugins:
-        [
-            new CleanWebpackPlugin()
-        ]
-    }
-)
-
+module.exports = merge(commonConfiguration, {
+  mode: "production",
+  plugins: [new CleanWebpackPlugin()],
+});
 ```
 
-if you run `npm run build` you will have the `dist` folder with outcome static assets that are ready to be deployed. In the `index.html` file you do not need to add `<script></script>` tag, webpack will add it for you. the `script.js` file and `style.css` should all be in the `/src/` directory. 
+if you run `npm run build` you will have the `dist` folder with outcome static assets that are ready to be deployed. In the `index.html` file you do not need to add `<script></script>` tag, webpack will add it for you. the `script.js` file and `style.css` should all be in the `/src/` directory.
 
-Run `npm run dev` everytime you want to start coding and see on the screen (nodemon can also be used to watch your actions in real time). 
+Run `npm run dev` everytime you want to start coding and see on the screen (nodemon can also be used to watch your actions in real time).
 
-
-### 03 | Transform Objects 
+### 03 | Transform Objects
 
 for all objects / classes in the Object3D category has 4 features in three.js
 
-* position --> to move the object
-* scale --> to resize the object 
-* rotation --> to rotate the object 
-* quaternion --> also rotate the object, expressed in the form **(a + bi + cj + dk)**
+- position --> to move the object
+- scale --> to resize the object
+- rotation --> to rotate the object
+- quaternion --> also rotate the object, expressed in the form **(a + bi + cj + dk)**
 
 **Move Obejcts**
 
 ```javascript
-mesh.position.x = 0.7
-mesh.position.y = - 0.6
-mesh.position.z = 1
+mesh.position.x = 0.7;
+mesh.position.y = -0.6;
+mesh.position.z = 1;
 ```
 
 ![image](https://threejs-journey.xyz/assets/lessons/05/step-02.png)
@@ -289,10 +264,10 @@ mesh.position.z = 1
 the `position` property is not any object. It is an instance of the `Vector3` class. while this class has an x, y and z, it has many useful methods.
 
 ```javascript
-console.log(mesh.position.length())                    // get the length of a vector
-console.log(mesh.position.distanceTo(camera.position)) // get the distance from another Vector3
-console.log(mesh.position.normalize())                 // normalize its values (reduce the length to 1 unit but preserve its direction)
-mesh.position.set(0.7, - 0.6, 1)                       // to change the values
+console.log(mesh.position.length()); // get the length of a vector
+console.log(mesh.position.distanceTo(camera.position)); // get the distance from another Vector3
+console.log(mesh.position.normalize()); // normalize its values (reduce the length to 1 unit but preserve its direction)
+mesh.position.set(0.7, -0.6, 1); // to change the values
 ```
 
 **Axes Helper**
@@ -301,7 +276,7 @@ positiong things in space relies on axes, using `AxesHelper` can help you, it wi
 
 ```javascript
 const axesHelper = new THREE.AxesHelper(2);
-scene.add(axesHelper)
+scene.add(axesHelper);
 ```
 
 ![axes helper](axes_helper.png)
@@ -313,55 +288,49 @@ the green and red line will show up. the green line --> y axis, the red line -->
 `scale` is also a `Vector3`, by default, x, y, z are equal to 1, meaning that the object has no scaling applied. If you put 0.5 as a value, the object will be half of its size on this axis, and if you put 2, it will be 2x size.
 
 ```javascript
-mesh.scale.x = 2
-mesh.scale.y = 0.25
-mesh.scale.z = 0.5 
+mesh.scale.x = 2;
+mesh.scale.y = 0.25;
+mesh.scale.z = 0.5;
 ```
 
 ![scale objects](scale_objects.png)
 
-
-**Rotate Objects** 
-
+**Rotate Objects**
 
 ```javascript
-mesh.rotation.x = Math.PI * 0.25
-mesh.rotation.y = Math.PI * 0.25
+mesh.rotation.x = Math.PI * 0.25;
+mesh.rotation.y = Math.PI * 0.25;
 ```
 
 ![rotation](rotation.png)
-
-
 
 **Quaternion**
 
 The `quaternion` property also expresses a rotation, but in a more mathmatical way, which solves the order problem.
 
-
 **Look at this**
 
-Object3D instances have an excellent method named `lookAt(...)` that lets you ask an object to look at something. The object will automatically rotate its `-z` axis toward the target you provided. 
+Object3D instances have an excellent method named `lookAt(...)` that lets you ask an object to look at something. The object will automatically rotate its `-z` axis toward the target you provided.
 
 ```javascript
-camera.lookAt(new THREE.Vector3(0, - 1, 0))
+camera.lookAt(new THREE.Vector3(0, -1, 0));
 ```
 
 ![lookat](lookat.png)
-
 
 **Combining Transformations**
 
 you can combine the `position`, `rotation`, and `scale` in any order. The result will be the same, its equivalent to the state of the object.
 
 ```javascript
-mesh.position.x = 0.7
-mesh.position.y = - 0.6
-mesh.position.z = 1
-mesh.scale.x = 2
-mesh.scale.y = 0.25
-mesh.scale.z = 0.5
-mesh.rotation.x = Math.PI * 0.25
-mesh.rotation.y = Math.PI * 0.25
+mesh.position.x = 0.7;
+mesh.position.y = -0.6;
+mesh.position.z = 1;
+mesh.scale.x = 2;
+mesh.scale.y = 0.25;
+mesh.scale.z = 0.5;
+mesh.rotation.x = Math.PI * 0.25;
+mesh.rotation.y = Math.PI * 0.25;
 ```
 
 ![comb](comb.png)
@@ -384,49 +353,41 @@ Comment the `lookAt(...)` call and, instead of our previously created cube, crea
 /**
  * Objects
  */
-const group = new THREE.Group()
-group.scale.y = 2
-group.rotation.y = 0.2
-scene.add(group)
+const group = new THREE.Group();
+group.scale.y = 2;
+group.rotation.y = 0.2;
+scene.add(group);
 
 const cube1 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
-)
-cube1.position.x = - 1.5
-group.add(cube1)
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshBasicMaterial({ color: 0xff0000 })
+);
+cube1.position.x = -1.5;
+group.add(cube1);
 
 const cube2 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
-)
-cube2.position.x = 0
-group.add(cube2)
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshBasicMaterial({ color: 0xff0000 })
+);
+cube2.position.x = 0;
+group.add(cube2);
 
 const cube3 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
-)
-cube3.position.x = 1.5
-group.add(cube3)
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshBasicMaterial({ color: 0xff0000 })
+);
+cube3.position.x = 1.5;
+group.add(cube3);
 ```
 
 ![scene_graph](scene_graph.png)
 
-
-
 ### 06 | Animations
-
-
 
 ### 07 | Cameras
 
-
 ### 08 | Fullscreen and Resizing
 
-
-
-### 09 | Geometrics 
-
+### 09 | Geometrics
 
 ### 10 | Debug UI

@@ -9,51 +9,49 @@ Several design patterns and TS implementaion will be shown here:
 [reference](https://refactoring.guru/design-patterns/typescript)
 
 more here:
-* https://github.com/torokmark/design_patterns_in_typescript
+
+- https://github.com/torokmark/design_patterns_in_typescript
 
 Based on the refactoring Guru, lets do the following first:
 
-* Creational Patterns
-* Structural Patterns
-* Behavioral Patterns
+- Creational Patterns
+- Structural Patterns
+- Behavioral Patterns
 
 ## Creational Patterns
 
-* Abstract Factory
-* Builder
-* Factory Method
-* Prototype
-* Singleton
-
+- Abstract Factory
+- Builder
+- Factory Method
+- Prototype
+- Singleton
 
 ## Structural Patterns
 
-* Adaptor
-* Bridge
-* Composite
-* Decorator
-* Facade
-* Flyweight
-* Proxy
-
+- Adaptor
+- Bridge
+- Composite
+- Decorator
+- Facade
+- Flyweight
+- Proxy
 
 ## Behavioral Patterns
 
-* Chain of Responsibility
-* Command
-* Iterator
-* Mediator
-* Memento
-* Observer
-* State
-* Strategy
-* Template Method
-* Visitor
-
+- Chain of Responsibility
+- Command
+- Iterator
+- Mediator
+- Memento
+- Observer
+- State
+- Strategy
+- Template Method
+- Visitor
 
 ### Creational Patterns
 
-Abstract Factory is a creational pattern, which solves the problem of creating entire product families without sepecifying their concrete classes. 
+Abstract Factory is a creational pattern, which solves the problem of creating entire product families without sepecifying their concrete classes.
 
 ```Typescript
 
@@ -86,40 +84,26 @@ class ConcreteFactory1 implements AbstractFactory {
 
 ### Structural Pattern
 
-
 ### Builder
-
 
 ### Bridge
 
-
-
-### Factory Method 
-
-
+### Factory Method
 
 ### Composite
 
-
 ### Prototype
-
 
 ### Decorator
 
-
 ### Singleton
 
-
 ### Facade
-
-
 
 ### Flyweight
 
 ### Proxy
 
-
-
 ### Adapter Pattern
 
-Convert the interface of class into another interface clients expect. 
+Convert the interface of class into another interface clients expect.
