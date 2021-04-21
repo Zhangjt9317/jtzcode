@@ -391,3 +391,112 @@ group.add(cube3);
 ### 09 | Geometrics
 
 ### 10 | Debug UI
+
+while you can create your own debug UI using HTML/CSS/JS, there are already multiply libraries
+
+- dat.GUI
+- control-panel
+- ControlKit
+- Guify
+- Oui
+
+All of these can do what we want, but we will use the most popular one, which is dat.GUI. Feel free to try the other ones.
+
+For example,
+
+![debug_ui](debug_ui.png)
+
+### How to implement Dat.GUI
+
+To add Dat.GUI to our webpack project, we can use npm to install it `npm install --save dat.gui` note that `--save` is necessary if you want that package to be included in your project build.
+
+**note if you wanna delete or add some modules, or the entire node_modules, you can use `npx npkill` to delete everything like a pro**
+
+relaunch the server
+
+```javascript
+import "./style.css";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import gasp from "gasp";
+import * as dat from "dat.gui";
+
+//........
+```
+
+now you can instantiate the Dat.GUI:
+
+```javascript
+/**
+ * Debug
+ */
+const gui = new dat.GUI();
+```
+
+This results in an empty panel on the top right corner of the screen.
+
+There are different types of elements you can add to that panel:
+
+- Range -- for numbers with minimum and maximum value
+- Color -- for colors with various formats
+- Text -- for simple texts
+- Checkbox -- for booleans ( `true` or `false`)
+- Select -- for a choice from a list of values
+- Button -- to trigger functions
+- Folder -- to organize your panel if you have too many elements
+
+### Add elements
+
+to add an element to the panel, you must use `gui.add(...)`. The first parameter is an object and the second parameter is the property of that object you want to tweak. You need to set it after you created the concerned object:
+
+```javascript
+gui.add(mesh.position, "y");
+
+// specify min and max value and the precision
+gui.add(mesh.position, "y", -3, 3, 0.01);
+
+// or you can use min(), max(), step() and use add() to chain them
+gui.add(mesh.position, "y").min(-3).max(3).step(0.01);
+
+// you can add a label for this
+gui.add(mesh.position, "y").min(-3).max(3).step(0.01).name("elevation");
+```
+
+Dat.GUI will automatically detect what kind of property you want to tweak and use the corresponding element. A good example is the `visible` property of Object3D. It is a boolean that, if `false`, will hide the object:
+
+```javascript
+const parameters = {
+  color: 0xff0000,
+};
+gui.add(mesh, "visible");
+gui.add(material, "wireframe");
+gui.addColor(parameters, "color").onChange(() => {
+  material.color.set(parameters.color);
+});
+const material = new THREE.MeshBasicMaterial({ color: parameters.color });
+
+// add spin action using gsap ==> need to check the version, otherwise gsap.to does not exist
+const parameters = {
+  color: 0xff0000,
+  spin: () => {
+    gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI * 2 });
+  },
+};
+gui.add(parameters, "spin");
+```
+
+### Tips
+
+### Hide
+
+Press `H` to hide the panel, if you want the panel to be hidden from start, call `gui.hide()` after instantiating it.
+
+### Close
+
+You can close the panel by clicking on its bottom part.
+
+If you want the panel to be closed by default, you can send an object when instantiating Dat.GUI and pass it `closed: true` in its properties:
+
+```javascript
+const gui = new dat.GUI({ closed: true });
+```
