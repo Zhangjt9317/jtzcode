@@ -2,6 +2,10 @@
 title: 原生的JavaScript的DOM操作
 date: 2020-12-08 22:58:52
 tags:
+  - JS
+  - DOM
+categories:
+  - Basic JS
 ---
 
 ## 什么是 DOM

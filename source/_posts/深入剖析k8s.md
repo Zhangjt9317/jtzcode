@@ -59,16 +59,12 @@ docker run "myMirror"
 
 也正因为如此，容器技术生态才爆发了一场关于“容器编排”的“战争”。而这次战争，最终以 Kubernetes 项目和 CNCF 社区的胜利而告终。所以，这个专栏后面的内容，我会以 Docker 和 Kubernetes 项目为核心，为你详细介绍容器技术的各项实践与其中的原理。
 
-
 总结是
 ![containerImage](container.jpg)
 
-
-
 ### 隔离与限制
 
-Linux容器中用来实现”隔离“的技术手段：Namespace。通过这些讲解，
+Linux 容器中用来实现”隔离“的技术手段：Namespace。通过这些讲解，
 Namespace 技术实际上修改了应用进程看待整个计算机“视图”，即它的“视线”被操作系统做了限制，只能“看到”某些指定的内容。但是对与宿主来说，这些被“隔离”了的进程跟其他进程并没有太大区别。
 
 ![containerImage](container.jpg)
-

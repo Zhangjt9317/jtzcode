@@ -4,7 +4,7 @@ date: 2021-03-29 15:36:57
 tags:
 ---
 
-Several design patterns and TS implementaion will be shown here:
+In this article I will show TS design patterns and implementaions:
 
 [reference](https://refactoring.guru/design-patterns/typescript)
 

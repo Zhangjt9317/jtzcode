@@ -8,9 +8,7 @@ Three.js is very popular now, and the framework is getting pretty stable, good t
 
 This article refers to the [Three.js Journey course](https://threejs-journey.xyz/lessons/3)
 
-## Basics
-
-### 01 | Build a Scene
+## 03 | Build a Scene
 
 To actually be able to display anything with three.js, we need three things:
 
@@ -69,7 +67,7 @@ const camera = new THREE.PerspectiveCamera();
 scene.add(camera);
 ```
 
-### 02 | Webpack
+## 04 | Webpack
 
 in the previous section we loaded the Three.js in a single file, it has limitations, **it does not include some of the Three.js classes because the file would be too heavy -- in one file** (use the three.min.js).
 
@@ -242,7 +240,7 @@ if you run `npm run build` you will have the `dist` folder with outcome static a
 
 Run `npm run dev` everytime you want to start coding and see on the screen (nodemon can also be used to watch your actions in real time).
 
-### 03 | Transform Objects
+## 05 | Transform Objects
 
 for all objects / classes in the Object3D category has 4 features in three.js
 
@@ -382,15 +380,19 @@ group.add(cube3);
 
 ![scene_graph](scene_graph.png)
 
-### 06 | Animations
+## 06 | Animations
 
-### 07 | Cameras
+The most important step in threejs and other animation engines is to animate your obejcts. We have created a scene that we rendered once at the end of our code. That is already good progress, but most of the time, you will want to animate them.
 
-### 08 | Fullscreen and Resizing
+using animation in three.js works like stop motion. You move the objects, and you do a render. Then you move the objects more, and another render. etc. the more you move the objects between renders, the faster they will appear to move.
 
-### 09 | Geometrics
+## 07 | Cameras
 
-### 10 | Debug UI
+## 08 | Fullscreen and Resizing
+
+## 09 | Geometrics
+
+## 10 | Debug UI
 
 while you can create your own debug UI using HTML/CSS/JS, there are already multiply libraries
 
@@ -500,3 +502,87 @@ If you want the panel to be closed by default, you can send an object when insta
 ```javascript
 const gui = new dat.GUI({ closed: true });
 ```
+
+### Width
+
+you can change the panel's width by drag and dropping its left border (although please note, it doesn't always work).
+
+if you want to change the default width of the panel, add `width: ...` in the properties:
+
+```javascript
+const gui = new dat.GUI({ width: 400 });
+```
+
+if you want to know more about Dat.GUI, there are some links:
+
+- Github repository: https://github.com/dataarts/dat.gui
+- API documentation: https://github.com/dataarts/dat.gui/blob/HEAD/API.md
+- A simple but complete example: https://jsfiddle.net/ikatyang/182ztwao/
+
+## 11 | Textures
+
+### What are textures?
+
+images that will cover the surface of your geometries, many types of textures can have different effects on the apperances of your geometry. It's not just about the color.
+
+Here are some most common type of textures using a famous door texture by Joao Paulo.
+
+![door_albedo](door_albedo.jpg)
+
+- Color (or albedo): The albedo texture is the most simple one. it only takes the pixels of the texture and apply them to the geometry
+- Alpha: The alpha texture is a grayscale image where white will be visible, and black won't
+  ![alpha](alpha.jpg)
+- Height: The height texture is a grayscale image that will move that vertices to create some relief. You will need to add subdivision if you want to see it
+  ![height](height.jpg)
+
+- Normal: The normal texture will add small details. It won't move the vertices, but it will lure the light into thinking that the face is oriented differently. Normal textures are very useful to add details with good performance because you don't need to subdivide the geometry
+  ![Normal](Normal.jpg)
+
+- Ambient Occulusion: a grayscale image that will fake shadow in the surface's crevices. While it's not physically accurate, it certainly helps to create contrast
+  ![amb_occ](amb_occ.jpg)
+
+- Metalness: a grayscale image that will specify which part is metallic (white) and non-metallic(black). This information will help to create reflection
+  ![Metalness](Metalness.jpg)
+
+- Roughness: a grayscale image that comes with metalness, and that will specify which part is rought (white) and which part is smooth (black). This information will help to dissipate the light. A carpet is very rugged, and you won't see the light reflection on it, while the water's surface is very smooth, and you can see the light reflecting on it. Here, the wood is uniform because there is a clear coat on it
+  ![Roughness](Roughness.jpg)
+
+### PBR
+
+Those textures (especially the metalness and the roughness) follow what we call PBR principles. PBR stands for **Physically Based Rendering**. It regroups many techniques that tend to follow real-life directions to get realistic results.
+
+There are many other techniques, while PBR is becoming the standard for realistic renders, and many software engines, and libraries are using it.
+
+For now, we will simply focus on how to load textures, how to use them, what transformations we can apply, and how to opitimize them. Here are some refs:
+
+- https://marmoset.co/posts/basic-theory-of-physically-based-rendering/
+
+- https://marmoset.co/posts/physically-based-rendering-and-you-can-too/
+
+### How to load textures
+
+### Getting the URL of the image
+
+To load the texture, we need the url of the image file .
+
+Because we are using webpack, there are two ways of getting it.
+
+You can put the image texture in the `/src` folder and import it like you would import a JS dependency:
+
+```javascript
+import imageSource from "./image.png";
+
+console.log(imageSource);
+```
+
+or you can put that image in the `/static/` folder and access it just by adding the path of the image (without `/static`) to the URL:
+
+```javascript
+const imageSource = "/image.png";
+
+console.log(imageSource);
+```
+
+Be careful, this `/static/` folder only works because of the webpack template's configuration. If you are using other types of bundler, you might need to adapt your project.
+
+We will use the `/static/` folder technique for the rest of the course.
